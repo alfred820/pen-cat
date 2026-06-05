@@ -586,14 +586,16 @@
 <script>
 // ─── Pet data ───
 const pets = [
-  { name: '小橘', breed: '橘猫 · 1岁', photo: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=440&fit=crop&auto=format', tags: ['亲人', '已绝育', '疫苗齐全'], badge: { text: 'new', class: 'new' }, filter: 'cat' },
   { name: '旺财', breed: '中华田园犬 · 2岁', photo: 'https://images.unsplash.com/photo-1587402092301-725e37c70fd8?w=400&h=440&fit=crop&auto=format', tags: ['活泼', '看家'], badge: null, filter: 'dog' },
-  { name: '团子', breed: '布偶猫 · 3个月', photo: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=400&h=440&fit=crop&auto=format', tags: ['幼崽', '粘人', 'CFA认证'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
   { name: '小白', breed: '萨摩耶 · 1.5岁', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=440&fit=crop&auto=format', tags: ['温柔', '已绝育'], badge: null, filter: 'dog' },
-  { name: '煤球', breed: '英短蓝猫 · 2岁', photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=440&fit=crop&auto=format', tags: ['独立', '已绝育', '安静'], badge: null, filter: 'cat' },
-  { name: '豆豆', breed: '泰迪 · 4个月', photo: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=440&fit=crop&auto=format', tags: ['幼崽', '聪明', '训练中'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
-  { name: '花花', breed: '三花猫 · 1岁', photo: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=440&fit=crop&auto=format', tags: ['亲人', '已驱虫'], badge: null, filter: 'cat' },
   { name: '大黑', breed: '拉布拉多 · 3岁', photo: 'https://images.unsplash.com/photo-1568572933382-74d440642117?w=400&h=440&fit=crop&auto=format', tags: ['忠厚', '已绝育', '喜欢小孩'], badge: { text: '已领养', class: 'adopted' }, filter: 'dog' },
+  { name: '金毛', breed: '金毛寻回犬 · 2岁', photo: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?w=400&h=440&fit=crop&auto=format', tags: ['温顺', '已绝育', '导盲训练'], badge: null, filter: 'dog' },
+  { name: '小橘', breed: '橘猫 · 1岁', photo: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=440&fit=crop&auto=format', tags: ['亲人', '已绝育', '疫苗齐全'], badge: { text: 'new', class: 'new' }, filter: 'cat' },
+  { name: '煤球', breed: '英短蓝猫 · 2岁', photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=440&fit=crop&auto=format', tags: ['独立', '已绝育', '安静'], badge: null, filter: 'cat' },
+  { name: '花花', breed: '三花猫 · 1岁', photo: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=440&fit=crop&auto=format', tags: ['亲人', '已驱虫'], badge: null, filter: 'cat' },
+  { name: '咪咪', breed: '美短 · 8个月', photo: 'https://images.unsplash.com/photo-1570824104453-508955ab713e?w=400&h=440&fit=crop&auto=format', tags: ['活泼', '已驱虫', '疫苗齐全'], badge: null, filter: 'cat' },
+  { name: '团子', breed: '布偶猫 · 3个月', photo: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=400&h=440&fit=crop&auto=format', tags: ['幼崽', '粘人', 'CFA认证'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
+  { name: '豆豆', breed: '泰迪 · 4个月', photo: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=440&fit=crop&auto=format', tags: ['幼崽', '聪明', '训练中'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
 ];
 
 function renderPets(filter = 'all') {
