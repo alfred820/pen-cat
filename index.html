@@ -158,60 +158,24 @@
     width: 440px; height: 440px; z-index: 1;
     animation: fadeUp 1s 0.5s both;
   }
-  .hero-carousel {
-    width: 100%; height: 100%;
-    border-radius: var(--radius);
-    overflow: hidden; position: relative;
-    background: var(--sand);
-    box-shadow: 0 40px 80px -20px rgba(44,36,32,0.35);
-  }
-  .hero-slides-track {
-    display: flex; height: 100%;
-    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-  }
-  .hero-slide {
-    min-width: 100%; height: 100%;
-    flex-shrink: 0;
-  }
-  .hero-slide img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-  }
-  /* ─── Carousel arrows ─── */
-  .hero-carousel-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    z-index: 3;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: none; cursor: pointer;
-    background: rgba(255,255,255,0.85);
-    color: var(--charcoal);
-    font-size: 1.1rem;
+  .hero-visual-inner {
+    width: 100%; height: 100%; border-radius: 50%;
+    background: linear-gradient(135deg, var(--clay-light), var(--gold), var(--coral));
     display: flex; align-items: center; justify-content: center;
-    opacity: 0;
-    transition: opacity 0.35s ease, transform 0.35s ease, background 0.25s ease;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    font-size: 12rem; line-height: 1;
+    box-shadow: 0 40px 80px -20px rgba(196,122,90,0.4);
+    position: relative;
   }
-  .hero-carousel-arrow:hover { background: #fff; }
-  .hero-carousel-arrow.prev { left: 12px; }
-  .hero-carousel-arrow.next { right: 12px; }
-  .hero-carousel:hover .hero-carousel-arrow { opacity: 1; }
-  .hero-dots {
-    position: absolute; left: 50%; bottom: 16px;
-    transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 2;
+  .hero-visual-inner::after {
+    content: ''; position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: ringPulse 3s ease-in-out infinite;
   }
-  .hero-dot {
-    width: 8px; height: 8px; border-radius: 999px;
-    border: none; padding: 0;
-    background: rgba(255,255,255,0.6);
-    cursor: pointer;
-    transition: width 0.25s ease, background 0.25s ease, opacity 0.25s ease;
-    opacity: 0.6;
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.04); opacity: 0.4; }
   }
-  .hero-dot.active { width: 18px; background: #fff; opacity: 1; }
 
   /* ─── Stats bar ─── */
   .stats {
@@ -418,6 +382,7 @@
   /* ─── Responsive ─── */
   @media (max-width: 1024px) {
     .hero-visual { width: 320px; height: 320px; right: 24px; }
+    .hero-visual-inner { font-size: 8rem; }
   }
   @media (max-width: 768px) {
     nav { padding: 16px 24px; }
@@ -426,7 +391,8 @@
     .hero-content { max-width: 100%; }
     .hero p { margin-left: auto; margin-right: auto; }
     .hero-actions { justify-content: center; }
-    .hero-visual { position: static; transform: none; width: 260px; height: 260px; margin: 40px auto 0; }
+    .hero-visual { position: static; transform: none; width: 240px; height: 240px; margin: 40px auto 0; }
+    .hero-visual-inner { font-size: 6rem; }
     .section { padding: 60px 24px; }
     .stats { gap: 32px; padding: 40px 24px; }
     .testimonial-section { padding: 60px 24px; }
@@ -473,26 +439,7 @@
     </div>
   </div>
   <div class="hero-visual">
-    <div class="hero-carousel">
-      <div class="hero-slides-track">
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800&h=800&fit=crop&auto=format" alt="慵懒晒太阳的猫咪">
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&h=800&fit=crop&auto=format" alt="露出笑容的小狗">
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&h=800&fit=crop&auto=format" alt="一起趴在沙发上的猫和狗">
-        </div>
-      </div>
-      <button class="hero-carousel-arrow prev" aria-label="上一张">&lsaquo;</button>
-      <button class="hero-carousel-arrow next" aria-label="下一张">&rsaquo;</button>
-      <div class="hero-dots">
-        <button class="hero-dot active" data-index="0" aria-label="第一张"></button>
-        <button class="hero-dot" data-index="1" aria-label="第二张"></button>
-        <button class="hero-dot" data-index="2" aria-label="第三张"></button>
-      </div>
-    </div>
+    <div class="hero-visual-inner">🐕</div>
   </div>
 </section>
 
@@ -682,68 +629,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 });
-
-// ─── Hero carousel ───
-(function () {
-  const track = document.querySelector('.hero-slides-track');
-  const dots = Array.from(document.querySelectorAll('.hero-dot'));
-  const prevBtn = document.querySelector('.hero-carousel-arrow.prev');
-  const nextBtn = document.querySelector('.hero-carousel-arrow.next');
-  if (!track) return;
-  const slideCount = dots.length;
-  let current = 0;
-  let timer = null;
-  const INTERVAL = 4500;
-
-  function goTo(index) {
-    dots[current].classList.remove('active');
-    current = index;
-    track.style.transform = 'translateX(' + (-current * 100) + '%)';
-    dots[current].classList.add('active');
-  }
-  function next() { goTo((current + 1) % slideCount); }
-  function prev() { goTo((current - 1 + slideCount) % slideCount); }
-  function start() { stop(); timer = setInterval(next, INTERVAL); }
-  function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
-  // Arrow buttons
-  if (prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); prev(); start(); });
-  if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); next(); start(); });
-
-  // Dot clicks
-  dots.forEach(dot => {
-    dot.addEventListener('click', function() {
-      goTo(Number(dot.dataset.index || 0));
-      start();
-    });
-  });
-
-  // Hover pause
-  const carousel = document.querySelector('.hero-carousel');
-  if (carousel) {
-    carousel.addEventListener('mouseenter', stop);
-    carousel.addEventListener('mouseleave', start);
-  }
-
-  // ─── Touch swipe ───
-  var touchStartX = 0;
-  var touchStartY = 0;
-  track.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  track.addEventListener('touchend', function(e) {
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    var dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) { next(); } else { prev(); }
-      start();
-    }
-  });
-
-  start();
-})();
-
 </script>
 </body>
 </html>
