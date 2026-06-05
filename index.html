@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>毛毛舍 · 宠物领养</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --clay: #c47a5a;
+    --clay-light: #e8a984;
+    --cream: #fdf6ed;
+    --moss: #4a6b4a;
+    --moss-light: #6b8f6b;
+    --charcoal: #2c2420;
+    --warm-gray: #8a7a72;
+    --sand: #e5d5c5;
+    --coral: #d6655a;
+    --gold: #d4a54a;
+    --card-bg: #ffffff;
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* ─── Grain overlay ─── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* ─── Nav ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 48px;
+    transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(253,246,237,0.85);
+    backdrop-filter: blur(16px) saturate(1.2);
+    box-shadow: 0 1px 0 rgba(44,36,32,0.06);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; font-style: italic;
+    color: var(--clay);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--moss); }
+
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: var(--charcoal);
+    font-weight: 500; font-size: 0.85rem;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    position: relative; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: var(--clay);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { color: var(--clay); }
+
+  .nav-btn {
+    background: var(--clay); color: #fff !important;
+    padding: 10px 24px; border-radius: 100px;
+    text-transform: uppercase; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 1px; transition: background 0.3s, transform 0.3s !important;
+  }
+  .nav-btn:hover { background: var(--charcoal) !important; transform: translateY(-2px); }
+  .nav-btn::after { display: none !important; }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 140px 48px 100px; position: relative; overflow: hidden;
+  }
+  .hero-bg-shape {
+    position: absolute; top: -30%; right: -10%;
+    width: 70vw; height: 140vh;
+    background: radial-gradient(ellipse at 30% 50%, var(--clay-light) 0%, transparent 70%),
+                radial-gradient(ellipse at 70% 30%, var(--gold) 0%, transparent 60%);
+    opacity: 0.25; z-index: 0;
+    animation: floatBg 12s ease-in-out infinite alternate;
+  }
+  @keyframes floatBg {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30px, 20px) scale(1.05); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 620px; }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(196,122,90,0.12); color: var(--clay);
+    padding: 6px 16px; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s 0.1s both;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 7vw, 5.2rem);
+    line-height: 1.05; letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s 0.2s both;
+  }
+  .hero h1 em { font-style: italic; color: var(--clay); }
+
+  .hero p {
+    font-size: 1.05rem; line-height: 1.7;
+    color: var(--warm-gray); margin-bottom: 40px;
+    max-width: 480px;
+    animation: fadeUp 0.8s 0.3s both;
+  }
+
+  .hero-actions { display: flex; gap: 16px; animation: fadeUp 0.8s 0.4s both; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 100px;
+    text-decoration: none; font-weight: 600; font-size: 0.85rem;
+    transition: all 0.3s; cursor: pointer; border: none;
+  }
+  .btn-primary {
+    background: var(--charcoal); color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--clay); transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(196,122,90,0.3);
+  }
+  .btn-outline {
+    background: transparent; color: var(--charcoal);
+    border: 2px solid var(--sand);
+  }
+  .btn-outline:hover {
+    border-color: var(--charcoal); transform: translateY(-2px);
+  }
+
+  .hero-visual {
+    position: absolute; right: 48px; top: 50%; transform: translateY(-50%);
+    width: 440px; height: 440px; z-index: 1;
+    animation: fadeUp 1s 0.5s both;
+  }
+  .hero-visual-inner {
+    width: 100%; height: 100%; border-radius: 50%;
+    background: linear-gradient(135deg, var(--clay-light), var(--gold), var(--coral));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12rem; line-height: 1;
+    box-shadow: 0 40px 80px -20px rgba(196,122,90,0.4);
+    position: relative;
+  }
+  .hero-visual-inner::after {
+    content: ''; position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: ringPulse 3s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.04); opacity: 0.4; }
+  }
+
+  /* ─── Stats bar ─── */
+  .stats {
+    display: flex; justify-content: center; gap: 64px;
+    padding: 48px 48px; background: var(--charcoal);
+    color: var(--cream); position: relative; overflow: hidden;
+  }
+  .stats::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+  }
+  .stat-item { text-align: center; position: relative; z-index: 1; }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem; letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--warm-gray); margin-top: 4px;
+  }
+
+  /* ─── Pets grid ─── */
+  .section {
+    padding: 100px 48px;
+  }
+  .section-label {
+    font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 3px; color: var(--clay); font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -1px; line-height: 1.15;
+  }
+  .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 8px 20px; border-radius: 100px; border: 1.5px solid var(--sand);
+    background: transparent; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s; color: var(--warm-gray);
+    font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .filter-btn.active {
+    background: var(--charcoal); color: #fff; border-color: var(--charcoal);
+  }
+
+  .pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 28px;
+  }
+
+  .pet-card {
+    background: var(--card-bg); border-radius: var(--radius);
+    overflow: hidden; position: relative;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s;
+    cursor: pointer; opacity: 0; transform: translateY(40px);
+    box-shadow: 0 2px 8px rgba(44,36,32,0.04);
+  }
+  .pet-card.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .pet-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 20px 60px -16px rgba(44,36,32,0.2);
+  }
+
+  .pet-img {
+    width: 100%; aspect-ratio: 1 / 1.1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5.6rem; position: relative;
+    transition: transform 0.6s;
+  }
+  .pet-card:hover .pet-img { transform: scale(1.04); }
+
+  .pet-badge {
+    position: absolute; top: 16px; left: 16px;
+    padding: 4px 12px; border-radius: 100px;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; z-index: 2;
+  }
+  .pet-badge.adopted { background: var(--moss); color: #fff; }
+  .pet-badge.new { background: var(--coral); color: #fff; }
+  .pet-badge.friendly { background: var(--gold); color: var(--charcoal); }
+
+  .pet-info { padding: 20px 22px 24px; }
+  .pet-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem; letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .pet-breed {
+    font-size: 0.8rem; color: var(--warm-gray);
+    margin-bottom: 12px;
+  }
+  .pet-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pet-tag {
+    padding: 3px 10px; border-radius: 100px;
+    background: var(--sand); font-size: 0.7rem; font-weight: 600;
+    color: var(--warm-gray);
+  }
+  .pet-tag.active { background: rgba(74,107,74,0.12); color: var(--moss); }
+
+  /* ─── Card colors ─── */
+  .pet-card:nth-child(1) .pet-img { background: linear-gradient(135deg, #f8e3d0, #ecc3a8); }
+  .pet-card:nth-child(2) .pet-img { background: linear-gradient(135deg, #d4e2d4, #b8cdb8); }
+  .pet-card:nth-child(3) .pet-img { background: linear-gradient(135deg, #fce8d0, #f5d4b8); }
+  .pet-card:nth-child(4) .pet-img { background: linear-gradient(135deg, #d0dce8, #b0c4d8); }
+  .pet-card:nth-child(5) .pet-img { background: linear-gradient(135deg, #f0d4d4, #e0b8b8); }
+  .pet-card:nth-child(6) .pet-img { background: linear-gradient(135deg, #e8dcc8, #d8c8b0); }
+  .pet-card:nth-child(7) .pet-img { background: linear-gradient(135deg, #d0e8d4, #b8d4bc); }
+  .pet-card:nth-child(8) .pet-img { background: linear-gradient(135deg, #f0dce0, #e0c4cc); }
+
+  /* ─── Testimonials ─── */
+  .testimonial-section {
+    background: var(--charcoal); color: var(--cream);
+    padding: 100px 48px; position: relative; overflow: hidden;
+  }
+  .testimonial-section::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+  .testimonial-section .section-label { color: var(--gold); }
+  .testimonial-section h2 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem,4vw,2.8rem); letter-spacing: -1px; margin-bottom: 48px; }
+
+  .testimonials { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; }
+  .testimonial-card {
+    padding: 32px; border-radius: var(--radius);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.3s;
+  }
+  .testimonial-card:hover { background: rgba(255,255,255,0.07); }
+  .testimonial-card .quote {
+    font-size: 2rem; line-height: 1; color: var(--gold); margin-bottom: 12px;
+    font-family: 'DM Serif Display', serif;
+  }
+  .testimonial-card p {
+    font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 12px; }
+  .testimonial-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    background: rgba(255,255,255,0.08);
+  }
+  .testimonial-author .name { font-weight: 600; font-size: 0.85rem; }
+  .testimonial-author .role { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 100px 48px; text-align: center;
+    position: relative;
+  }
+  .cta-section::before {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--sand), transparent);
+  }
+  .cta-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem,5vw,3.4rem); letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .cta-section p {
+    color: var(--warm-gray); margin-bottom: 32px;
+    max-width: 480px; margin-left: auto; margin-right: auto;
+  }
+  .cta-section .btn-primary {
+    background: var(--clay); font-size: 0.9rem; padding: 16px 40px;
+  }
+  .cta-section .btn-primary:hover {
+    background: var(--charcoal);
+    box-shadow: 0 12px 32px rgba(44,36,32,0.2);
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    padding: 32px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.75rem; color: var(--warm-gray); flex-wrap: wrap; gap: 12px;
+  }
+  footer .social { display: flex; gap: 20px; }
+  footer .social a {
+    color: var(--warm-gray); text-decoration: none;
+    transition: color 0.3s;
+  }
+  footer .social a:hover { color: var(--clay); }
+
+  /* ─── Animations ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1024px) {
+    .hero-visual { width: 320px; height: 320px; right: 24px; }
+    .hero-visual-inner { font-size: 8rem; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links a:not(.nav-btn) { display: none; }
+    .hero { padding: 120px 24px 80px; flex-direction: column; text-align: center; }
+    .hero-content { max-width: 100%; }
+    .hero p { margin-left: auto; margin-right: auto; }
+    .hero-actions { justify-content: center; }
+    .hero-visual { position: static; transform: none; width: 240px; height: 240px; margin: 40px auto 0; }
+    .hero-visual-inner { font-size: 6rem; }
+    .section { padding: 60px 24px; }
+    .stats { gap: 32px; padding: 40px 24px; }
+    .testimonial-section { padding: 60px 24px; }
+    .cta-section { padding: 60px 24px; }
+    footer { padding: 24px; flex-direction: column; text-align: center; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 2.4rem; }
+    .pets-grid { grid-template-columns: 1fr; }
+    .stats { gap: 24px; flex-wrap: wrap; }
+    .stat-num { font-size: 1.8rem; }
+  }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--clay-light); }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="navbar">
+  <div class="logo">毛毛<span>舍</span></div>
+  <div class="nav-links">
+    <a href="#pets">萌宠</a>
+    <a href="#stories">故事</a>
+    <a href="#about">关于</a>
+    <a href="#contact" class="nav-btn">预约探访</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-content">
+    <div class="hero-tag">🐾 领养代替购买</div>
+    <h1>找到你的<br><em>毛茸茸</em>家人</h1>
+    <p>每一只小动物都值得一个温暖的家。来认识我们等待领养的猫咪和狗狗，它们已经准备好用一生的陪伴来回报你的爱。</p>
+    <div class="hero-actions">
+      <a href="#pets" class="btn btn-primary">寻找萌宠 →</a>
+      <a href="#stories" class="btn btn-outline">听他们的故事</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-visual-inner">🐕</div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="stat-item">
+    <div class="stat-num" data-count="328">0</div>
+    <div class="stat-label">已找到家</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-count="24">0</div>
+    <div class="stat-label">待领养</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-count="12">0</div>
+    <div class="stat-label">合作救助站</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-count="100">0</div>
+    <div class="stat-label">% 爱心</div>
+  </div>
+</section>
+
+<!-- Pets -->
+<section class="section" id="pets">
+  <div class="section-label">🐶 🐱 我们的宝贝</div>
+  <div class="section-header">
+    <h2>等待拥抱的<br>小生命</h2>
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="dog">狗狗</button>
+      <button class="filter-btn" data-filter="cat">猫咪</button>
+      <button class="filter-btn" data-filter="baby">幼崽</button>
+    </div>
+  </div>
+  <div class="pets-grid" id="petsGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonial-section" id="stories">
+  <div class="section-label">💛 爱的回响</div>
+  <h2>领养家庭的故事</h2>
+  <div class="testimonials">
+    <div class="testimonial-card">
+      <div class="quote">"</div>
+      <p>领养小橘一年了，它从一只胆小的小猫变成了我们家最会撒娇的成员。每天回家它都在门口等我，这种被需要的感觉真好。</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">👩</div>
+        <div><div class="name">小雅</div><div class="role">领养人 · 2025</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="quote">"</div>
+      <p>原本只是想看看，结果一见到它那双眼睛我就知道——这就是我一直在等的家人。感谢毛毛舍让我们相遇。</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">👨</div>
+        <div><div class="name">阿杰</div><div class="role">领养人 · 2024</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="quote">"</div>
+      <p>领养了一只三条腿的狗狗，它比任何纯种犬都要坚强和快乐。每次看到它摇着尾巴奔跑，我都觉得这个世界更美好了。</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">👩‍🦰</div>
+        <div><div class="name">小雅</div><div class="role">领养人 · 2025</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2>你愿意给它一个家吗？</h2>
+  <p>预约一次探访，来救助站和这些小可爱们见个面。也许你会遇到命中注定的那个它。</p>
+  <a href="#" class="btn btn-primary">预约探访 🐾</a>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>© 2026 毛毛舍 · 以领养代替购买</div>
+  <div class="social">
+    <a href="#">微信</a>
+    <a href="#">微博</a>
+    <a href="#">小红书</a>
+    <a href="#">Instagram</a>
+  </div>
+</footer>
+
+<script>
+// ─── Pet data ───
+const pets = [
+  { name: '小橘', breed: '橘猫 · 1岁', emoji: '🐱', tags: ['亲人', '已绝育', '疫苗齐全'], badge: { text: 'new', class: 'new' }, filter: 'cat' },
+  { name: '旺财', breed: '中华田园犬 · 2岁', emoji: '🐕', tags: ['活泼', '看家'], badge: null, filter: 'dog' },
+  { name: '团子', breed: '布偶猫 · 3个月', emoji: '🐱', tags: ['幼崽', '粘人', 'CFA认证'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
+  { name: '小白', breed: '萨摩耶 · 1.5岁', emoji: '🦮', tags: ['温柔', '已绝育'], badge: null, filter: 'dog' },
+  { name: '煤球', breed: '英短蓝猫 · 2岁', emoji: '🐈‍⬛', tags: ['独立', '已绝育', '安静'], badge: null, filter: 'cat' },
+  { name: '豆豆', breed: '泰迪 · 4个月', emoji: '🐩', tags: ['幼崽', '聪明', '训练中'], badge: { text: 'baby', class: 'new' }, filter: 'baby' },
+  { name: '花花', breed: '三花猫 · 1岁', emoji: '🐈', tags: ['亲人', '已驱虫'], badge: null, filter: 'cat' },
+  { name: '大黑', breed: '拉布拉多 · 3岁', emoji: '🐕‍🦺', tags: ['忠厚', '已绝育', '喜欢小孩'], badge: { text: '已领养', class: 'adopted' }, filter: 'dog' },
+];
+
+function renderPets(filter = 'all') {
+  const grid = document.getElementById('petsGrid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? pets : pets.filter(p => p.filter === filter);
+
+  filtered.forEach((pet, i) => {
+    const badge = pet.badge ? `<span class="pet-badge ${pet.badge.class}">${pet.badge.text}</span>` : '';
+    const tags = pet.tags.map(t => `<span class="pet-tag">${t}</span>`).join('');
+    const card = document.createElement('div');
+    card.className = 'pet-card';
+    card.style.transitionDelay = `${i * 0.06}s`;
+    card.innerHTML = `
+      <div class="pet-img">
+        ${badge}
+        ${pet.emoji}
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">${pet.name}</div>
+        <div class="pet-breed">${pet.breed}</div>
+        <div class="pet-tags">${tags}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Intersection Observer for staggered entrance
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  grid.querySelectorAll('.pet-card').forEach(c => observer.observe(c));
+}
+
+// ─── Filter buttons ───
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPets(btn.dataset.filter);
+  });
+});
+
+// ─── Nav scroll effect ───
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ─── Stats counter animation ───
+function animateCounters() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    if (el.dataset.animated) return;
+    el.dataset.animated = 'true';
+    const duration = 1600;
+    const start = performance.now();
+    function update(now) {
+      const p = Math.min((now - start) / duration, 1);
+      el.textContent = Math.floor(p * target);
+      if (p < 1) requestAnimationFrame(update);
+      else el.textContent = target + (target === 100 ? '%' : '');
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounters(); statsObserver.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelector('.stats').querySelectorAll('.stat-num').forEach(el => statsObserver.observe(el));
+
+// ─── Initial render ───
+renderPets('all');
+
+// ─── Smooth scroll ───
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
